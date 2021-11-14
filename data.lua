@@ -1,6 +1,4 @@
-local vehicleCategories = { "land-mine", "locomotive", "artillery-wagon", "cargo-wagon", "fluid-wagon" }
-
-for _, category in pairs(vehicleCategories) do
+for _, category in pairs{ "land-mine", "locomotive", "artillery-wagon", "cargo-wagon", "fluid-wagon" } do
   for _, vehicle in pairs(data.raw[category]) do
     if (settings.startup["combat-tweaks--unkillable-"..category].value) then
       vehicle.resistances = {}
