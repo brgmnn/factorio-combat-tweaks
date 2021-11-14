@@ -39,3 +39,8 @@ luac.out
 *.x86_64
 *.hex
 
+# MacOS files
+.DS_Store
+
+# Mod artifacts
+/build
