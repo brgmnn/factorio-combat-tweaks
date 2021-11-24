@@ -1,6 +1,7 @@
 #!/bin/bash
 
-path="combat-tweaks_1.0.0"
+version=`jq -r ".version" < info.json`
+path="combat-tweaks_$version"
 
 mkdir -p "build/$path"
 cp -r *.lua info.json locale "build/$path/"
