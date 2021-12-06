@@ -2,26 +2,16 @@ local shell_range = settings.startup["combat-tweaks--cannon-shell-range"].value
 local min_cannon_turret_range = settings.startup["combat-tweaks--min-cannon-turret-range"].value
 
 -- Vanilla cannon shells
-for _, shell in pairs{
-  "cannon-shell",
-  "explosive-cannon-shell",
-  "uranium-cannon-shell",
-  "explosive-uranium-cannon-shell"
-} do
-  data.raw.ammo[shell].ammo_type.action.action_delivery.max_range = shell_range
-end
+for _, shell in pairs {
+  "cannon-shell", "explosive-cannon-shell", "uranium-cannon-shell", "explosive-uranium-cannon-shell"
+} do data.raw.ammo[shell].ammo_type.action.action_delivery.max_range = shell_range end
 
 -- Vanilla vehicles
 data.raw.gun["tank-cannon"].attack_parameters.range = shell_range
 
-
 -- Rampant Arsenal
 if mods["RampantArsenal"] then
-  for _, shell in pairs{
-    "bio-cannon-shell",
-    "he-cannon-shell",
-    "incendiary-cannon-shell",
-  } do
+  for _, shell in pairs { "bio-cannon-shell", "he-cannon-shell", "incendiary-cannon-shell" } do
     ammo = data.raw.ammo[shell .. "-ammo-rampant-arsenal"]
 
     for _, action in pairs(ammo.ammo_type.action) do

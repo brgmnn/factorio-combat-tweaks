@@ -43,6 +43,16 @@ data:extend({
     per_user = false
   },
 
+  -- Deadly trains
+  {
+    type = "bool-setting",
+    name = "combat-tweaks--deadly-trains",
+    setting_type = "startup",
+    default_value = false,
+    order = "9",
+    per_user = false
+  },
+
   -- Unkillable toggles
   {
     type = "bool-setting",

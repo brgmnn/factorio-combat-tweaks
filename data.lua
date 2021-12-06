@@ -1,30 +1,24 @@
 -- Unkillable entities
-for _, category in pairs{ "land-mine", "locomotive", "artillery-wagon", "cargo-wagon", "fluid-wagon" } do
+for _, category in pairs {
+  "land-mine", "locomotive", "artillery-wagon", "cargo-wagon", "fluid-wagon"
+} do
   for _, vehicle in pairs(data.raw[category]) do
-    if (settings.startup["combat-tweaks--unkillable-"..category].value) then
+    if (settings.startup["combat-tweaks--unkillable-" .. category].value) then
       vehicle.resistances = {}
-        for damageType, _ in pairs(data.raw["damage-type"]) do
-          vehicle.resistances[damageType] = {
-            type = damageType,
-            percent = 100
-          }
-        end
+
+      for damageType, _ in pairs(data.raw["damage-type"]) do
+        vehicle.resistances[damageType] = { type = damageType, percent = 100 }
+      end
     end
   end
 end
 
-
 -- Laser turrets
-local laser_turret_damage_modifier = settings.startup["combat-tweaks--laser-turret-damage-modifier"].value
-data.raw["electric-turret"]["laser-turret"].attack_parameters.damage_modifier = laser_turret_damage_modifier
+local laser_turret_damage_modifier = settings.startup["combat-tweaks--laser-turret-damage-modifier"]
+                                         .value
 
--- -- Modify laser shooting speed
--- for _, effect in pairs(data.raw.technology["laser-shooting-speed-7"].effects) do
---   if effect.type == "gun-speed" then
---     effect.modifier = 10.0
---   end
--- end
-
+data.raw["electric-turret"]["laser-turret"].attack_parameters.damage_modifier =
+    laser_turret_damage_modifier
 
 -- Modify artillery shell range research
 if settings.startup["combat-tweaks--enable-artillery-range-linear-scaling"].value == true then
@@ -38,4 +32,11 @@ if settings.startup["combat-tweaks--enable-artillery-range-linear-scaling"].valu
   --     effect.modifier = 10.0
   --   end
   -- end
+end
+
+-- Deadly trains
+if settings.startup["combat-tweaks--deadly-trains"].value == true then
+  for _, category in pairs { "locomotive", "artillery-wagon", "cargo-wagon", "fluid-wagon" } do
+    for _, vehicle in pairs(data.raw[category]) do vehicle.energy_per_hit_point = 0.00001 end
+  end
 end
