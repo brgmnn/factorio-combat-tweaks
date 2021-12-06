@@ -37,6 +37,6 @@ end
 -- Deadly trains
 if settings.startup["combat-tweaks--deadly-trains"].value == true then
   for _, category in pairs { "locomotive", "artillery-wagon", "cargo-wagon", "fluid-wagon" } do
-    for _, vehicle in pairs(data.raw[category]) do vehicle.energy_per_hit_point = 0.00001 end
+    for _, vehicle in pairs(data.raw[category]) do vehicle.energy_per_hit_point = 0.000001 end
   end
 end
