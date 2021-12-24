@@ -20,7 +20,7 @@ for i, size in pairs(enemies.sizes) do
     size = size,
     tier = i,
     tint1 = tint1,
-    tint2 = tint2,
+    tint2 = tint2
   }
 end
 
@@ -33,7 +33,7 @@ for i, size in pairs(enemies.sizes) do
     size = size,
     tier = i,
     tint1 = tint1,
-    tint2 = tint2,
+    tint2 = tint2
   }
 end
 
@@ -43,7 +43,7 @@ enemies.build_biter_spawner {
   attributes = attributes,
   autoplacer = autoplacer,
   map_color = map_color,
-  tint = tint1,
+  tint = tint1
 }
 
 -- Spitter spawner
@@ -52,5 +52,5 @@ enemies.build_spitter_spawner {
   attributes = attributes,
   autoplacer = autoplacer,
   map_color = map_color,
-  tint = tint1,
+  tint = tint1
 }

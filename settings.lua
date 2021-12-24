@@ -56,10 +56,26 @@ data:extend({
   -- Unkillable toggles
   {
     type = "bool-setting",
-    name = "combat-tweaks--unkillable-land-mine",
+    name = "combat-tweaks--unkillable-construction-robot",
     setting_type = "startup",
     default_value = false,
     order = "10",
+    per_user = false
+  },
+  {
+    type = "bool-setting",
+    name = "combat-tweaks--unkillable-logistic-robot",
+    setting_type = "startup",
+    default_value = false,
+    order = "10",
+    per_user = false
+  },
+  {
+    type = "bool-setting",
+    name = "combat-tweaks--unkillable-land-mine",
+    setting_type = "startup",
+    default_value = false,
+    order = "100",
     per_user = false
   },
   {

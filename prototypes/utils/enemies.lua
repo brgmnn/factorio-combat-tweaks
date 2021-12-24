@@ -221,7 +221,7 @@ local spawn_probability = {
 local function apply_unit_attributes(unit, attributes)
   attributes = attributes or {}
 
-  for i,attribute in pairs(attributes) do
+  for i, attribute in pairs(attributes) do
     if attribute == "slow-movement" then
 
     elseif attribute == "fast-movement" then
@@ -238,13 +238,13 @@ end
 local function apply_spawner_attributes(spawner, attributes)
   attributes = attributes or {}
 
-  for i,attribute in pairs(attributes) do
+  for i, attribute in pairs(attributes) do
     -- Allows faster spawning of units from spawner. We also increase the spawn radius to allow
     -- more units to spawn
     if attribute == "fast-spawning" then
       spawner.spawning_radius = spawner.spawning_radius * 1.5
 
-      for i,value in pairs(spawner.spawning_cooldown) do
+      for i, value in pairs(spawner.spawning_cooldown) do
         spawner.spawning_cooldown[i] = value / 2
       end
     end
@@ -510,8 +510,8 @@ local function build_spitter_spawner(attributes)
   spitter_spawner.enemy_map_color = attributes.map_color
   spitter_spawner.result_units = build_result_units { variant = variant, unit = "spitter" }
 
-  local spitter_spawner_corpse =
-      data_util.copy_prototype(data.raw["corpse"]["spitter-spawner-corpse"])
+  local spitter_spawner_corpse = data_util.copy_prototype(
+                                     data.raw["corpse"]["spitter-spawner-corpse"])
 
   spitter_spawner_corpse.name = variant .. "-spitter-spawner-corpse"
   spitter_spawner_corpse.animations = {

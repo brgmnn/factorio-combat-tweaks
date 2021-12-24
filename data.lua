@@ -3,7 +3,13 @@ require("prototypes.entity.fast-biters")
 
 -- Unkillable entities
 for _, category in pairs {
-  "land-mine", "locomotive", "artillery-wagon", "cargo-wagon", "fluid-wagon"
+  "construction-robot",
+  "logistic-robot",
+  "land-mine",
+  "locomotive",
+  "artillery-wagon",
+  "cargo-wagon",
+  "fluid-wagon"
 } do
   for _, vehicle in pairs(data.raw[category]) do
     if (settings.startup["combat-tweaks--unkillable-" .. category].value) then
@@ -40,6 +46,8 @@ end
 -- Deadly trains
 if settings.startup["combat-tweaks--deadly-trains"].value == true then
   for _, category in pairs { "locomotive", "artillery-wagon", "cargo-wagon", "fluid-wagon" } do
-    for _, vehicle in pairs(data.raw[category]) do vehicle.energy_per_hit_point = 0.000001 end
+    for _, vehicle in pairs(data.raw[category]) do
+      vehicle.energy_per_hit_point = 0.000001
+    end
   end
 end
