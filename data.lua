@@ -1,5 +1,5 @@
 require("prototypes.entity.common-biters")
--- require("prototypes.entity.fast-biters")
+require("prototypes.entity.fast-biters")
 
 -- Unkillable entities
 for _, category in pairs {

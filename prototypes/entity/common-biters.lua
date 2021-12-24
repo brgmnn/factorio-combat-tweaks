@@ -6,6 +6,7 @@ local enemies = require("prototypes.utils.enemies")
 local tint1 = { r = 1, g = 1, b = 1, a = 1 }
 local tint2 = { r = 1, g = 1, b = 1, a = 0.3 }
 local map_color = { r = 1, g = 1, b = 1 }
+local attributes = { "fast-spawning" }
 
 -- Use the same autoplacer for this faction
 local autoplacer = create_autoplacer { name = "common-biter", seed = 1234 }
@@ -14,11 +15,12 @@ local autoplacer = create_autoplacer { name = "common-biter", seed = 1234 }
 for i, size in pairs(enemies.sizes) do
   enemies.build_biter {
     variant = "common",
+    attributes = attributes,
+    map_color = map_color,
     size = size,
     tier = i,
     tint1 = tint1,
     tint2 = tint2,
-    map_color = map_color
   }
 end
 
@@ -26,26 +28,29 @@ end
 for i, size in pairs(enemies.sizes) do
   enemies.build_spitter {
     variant = "common",
+    attributes = attributes,
+    map_color = map_color,
     size = size,
     tier = i,
     tint1 = tint1,
     tint2 = tint2,
-    map_color = map_color
   }
 end
 
 -- Biter spawner
 enemies.build_biter_spawner {
+  variant = "common",
+  attributes = attributes,
   autoplacer = autoplacer,
   map_color = map_color,
   tint = tint1,
-  variant = "common",
 }
 
 -- Spitter spawner
 enemies.build_spitter_spawner {
+  variant = "common",
+  attributes = attributes,
   autoplacer = autoplacer,
   map_color = map_color,
   tint = tint1,
-  variant = "common"
 }

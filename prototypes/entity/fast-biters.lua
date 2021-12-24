@@ -1,19 +1,56 @@
 local data_util = require("__flib__.data-util");
+local animations = require("prototypes.utils.spawner-animation")
 local create_autoplacer = require("prototypes.utils.enemy-autoplace")
+local enemies = require("prototypes.utils.enemies")
 
-local nest_tint = { r = 0.1, g = 0.1, b = 1.0, a = 1 }
-local map_color = { r = 0.1, g = 0.1, b = 1.0 }
+local tint1 = { r = 1, g = 0.38, b = 0.24, a = 1 }
+local tint2 = { r = 1, g = 0.38, b = 0.24, a = 0.6 }
+local map_color = { r = 1, g = 0.38, b = 0.24 }
+local attributes = { "fastest-movement" }
 
-local fast_biter_spawner = data_util.copy_prototype(data.raw["unit-spawner"]["biter-spawner"]);
+-- Use the same autoplacer for this faction
+local autoplacer = create_autoplacer { name = "fast-biter", seed = 456 }
 
-fast_biter_spawner.name = "fast-biter-spawner";
-fast_biter_spawner.animations = {
-  spawner_idle_animation(0, nest_tint), spawner_idle_animation(1, nest_tint),
-  spawner_idle_animation(2, nest_tint), spawner_idle_animation(3, nest_tint)
+-- Biters
+for i, size in pairs(enemies.sizes) do
+  enemies.build_biter {
+    variant = "fast",
+    attributes = attributes,
+    map_color = map_color,
+    size = size,
+    tier = i,
+    tint1 = tint1,
+    tint2 = tint2,
+  }
+end
+
+-- Spitters
+for i, size in pairs(enemies.sizes) do
+  enemies.build_spitter {
+    variant = "fast",
+    attributes = attributes,
+    map_color = map_color,
+    size = size,
+    tier = i,
+    tint1 = tint1,
+    tint2 = tint2,
+  }
+end
+
+-- Biter spawner
+enemies.build_biter_spawner {
+  variant = "fast",
+  attributes = attributes,
+  autoplacer = autoplacer,
+  map_color = map_color,
+  tint = tint1,
 }
 
-local autoplacer = create_autoplacer { name = "fast-biter", seed = 1235 };
-fast_biter_spawner.autoplace = autoplacer.enemy_spawner_autoplace(0)
-fast_biter_spawner.enemy_map_color = map_color;
-
-data:extend({ fast_biter_spawner })
+-- Spitter spawner
+enemies.build_spitter_spawner {
+  variant = "fast",
+  attributes = attributes,
+  autoplacer = autoplacer,
+  map_color = map_color,
+  tint = tint1,
+}

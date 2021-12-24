@@ -217,6 +217,40 @@ local spawn_probability = {
   { { 0.93, 0 }, { 1.000, 1.0 } }
 }
 
+-- Applies unit attributes
+local function apply_unit_attributes(unit, attributes)
+  attributes = attributes or {}
+
+  for i,attribute in pairs(attributes) do
+    if attribute == "slow-movement" then
+
+    elseif attribute == "fast-movement" then
+      unit.movement_speed = unit.movement_speed * 1.5
+      unit.distance_per_frame = unit.distance_per_frame * 1.5
+    elseif attribute == "fastest-movement" then
+      unit.movement_speed = unit.movement_speed * 2
+      unit.distance_per_frame = unit.distance_per_frame * 2
+    end
+  end
+end
+
+-- Applies spawner attributes
+local function apply_spawner_attributes(spawner, attributes)
+  attributes = attributes or {}
+
+  for i,attribute in pairs(attributes) do
+    -- Allows faster spawning of units from spawner. We also increase the spawn radius to allow
+    -- more units to spawn
+    if attribute == "fast-spawning" then
+      spawner.spawning_radius = spawner.spawning_radius * 1.5
+
+      for i,value in pairs(spawner.spawning_cooldown) do
+        spawner.spawning_cooldown[i] = value / 2
+      end
+    end
+  end
+end
+
 local function build_biter(attributes)
   local tier = attributes.tier
   local scale = biter_attributes.scale[tier]
@@ -256,6 +290,8 @@ local function build_biter(attributes)
     animation = biterattackanimation(scale, tint1, tint2),
     range_mode = "bounding-box-to-bounding-box"
   }
+
+  apply_unit_attributes(biter, attributes.attributes)
 
   data:extend({
     biter,
@@ -352,6 +388,8 @@ local function build_spitter(attributes)
   -- },
   -- scale = { 0.25, 0.40, 0.60, 0.8, 0.9, 1, 1.2, 1.4, 1.6, 1.8 },
 
+  apply_unit_attributes(spitter, attributes.attributes)
+
   data:extend({
     spitter,
 
@@ -445,6 +483,8 @@ local function build_biter_spawner(attributes)
     animations.spawner_die_animation(3, tint)
   }
 
+  apply_spawner_attributes(biter_spawner, attributes.attributes)
+
   data:extend({ biter_spawner, biter_spawner_corpse })
 
   return biter_spawner
@@ -480,6 +520,8 @@ local function build_spitter_spawner(attributes)
     animations.spawner_die_animation(2, tint),
     animations.spawner_die_animation(3, tint)
   }
+
+  apply_spawner_attributes(spitter_spawner, attributes.attributes)
 
   data:extend({ spitter_spawner, spitter_spawner_corpse })
 
