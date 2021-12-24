@@ -35,12 +35,6 @@ if settings.startup["combat-tweaks--enable-artillery-range-linear-scaling"].valu
 
   data.raw.technology["artillery-shell-range-1"].unit.count_formula = formula
   data.raw.technology["artillery-shell-speed-1"].unit.count_formula = formula
-
-  -- for _, effect in pairs(artillery_range_tech.effects) do
-  --   if effect.type == "artillery-range" then
-  --     effect.modifier = 10.0
-  --   end
-  -- end
 end
 
 -- Deadly trains
