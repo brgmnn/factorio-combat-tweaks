@@ -1,4 +1,22 @@
 data:extend({
+  -- Enemies
+  {
+    type = "bool-setting",
+    name = "combat-tweaks--use-enemies",
+    setting_type = "startup",
+    default_value = false,
+    order = "0",
+    per_user = false
+  },
+  {
+    type = "bool-setting",
+    name = "combat-tweaks--new-enemy-map-colors",
+    setting_type = "startup",
+    default_value = false,
+    order = "0",
+    per_user = false
+  },
+
   -- Technology research
   {
     type = "bool-setting",

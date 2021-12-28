@@ -1,11 +1,13 @@
 local shell_range = settings.startup["combat-tweaks--cannon-shell-range"].value
 local min_cannon_turret_range = settings.startup["combat-tweaks--min-cannon-turret-range"].value
 
--- Disable regular enemies
-data.raw["noise-expression"]["enemy-base-radius"]["expression"] = {
-  type = "literal-number",
-  literal_value = 0
-};
+-- Disable regular enemies if new enemies are enabled.
+if (settings.startup["combat-tweaks--use-enemies"].value) then
+  data.raw["noise-expression"]["enemy-base-radius"]["expression"] = {
+    type = "literal-number",
+    literal_value = 0
+  };
+end
 
 -- Vanilla cannon shells
 for _, shell in pairs {

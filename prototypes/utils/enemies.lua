@@ -261,7 +261,11 @@ local function build_biter(attributes)
   local biter = data_util.copy_prototype(data.raw["unit"][vanilla_sizes[tier] .. "-biter"])
 
   biter.name = name
-  biter.enemy_map_color = attributes.map_color
+
+  -- Custom map colors for each faction
+  if (settings.startup["combat-tweaks--new-enemy-map-colors"].value) then
+    biter.enemy_map_color = attributes.map_color
+  end
 
   -- Set fixed attributes from lookup table
   for _, attr in pairs {
@@ -332,7 +336,11 @@ local function build_spitter(attributes)
   local spitter = data_util.copy_prototype(data.raw["unit"][vanilla_sizes[tier] .. "-spitter"])
 
   spitter.name = name
-  spitter.enemy_map_color = attributes.map_color
+
+  -- Custom map colors for each faction
+  if (settings.startup["combat-tweaks--new-enemy-map-colors"].value) then
+    spitter.enemy_map_color = attributes.map_color
+  end
 
   -- Set fixed attributes from lookup table
   for _, attr in pairs {
@@ -470,8 +478,12 @@ local function build_biter_spawner(attributes)
   }
 
   biter_spawner.autoplace = attributes.autoplacer.enemy_spawner_autoplace(0)
-  biter_spawner.enemy_map_color = attributes.map_color
   biter_spawner.result_units = build_result_units { variant = variant, unit = "biter" }
+
+  -- Custom map colors for each faction
+  if (settings.startup["combat-tweaks--new-enemy-map-colors"].value) then
+    biter_spawner.enemy_map_color = attributes.map_color
+  end
 
   local biter_spawner_corpse = data_util.copy_prototype(data.raw["corpse"]["biter-spawner-corpse"])
 
@@ -507,8 +519,12 @@ local function build_spitter_spawner(attributes)
   }
 
   spitter_spawner.autoplace = attributes.autoplacer.enemy_spawner_autoplace(0)
-  spitter_spawner.enemy_map_color = attributes.map_color
   spitter_spawner.result_units = build_result_units { variant = variant, unit = "spitter" }
+
+  -- Custom map colors for each faction
+  if (settings.startup["combat-tweaks--new-enemy-map-colors"].value) then
+    spitter_spawner.enemy_map_color = attributes.map_color
+  end
 
   local spitter_spawner_corpse = data_util.copy_prototype(
                                      data.raw["corpse"]["spitter-spawner-corpse"])
