@@ -3,8 +3,8 @@ local animations = require("prototypes.utils.spawner-animation")
 local create_autoplacer = require("prototypes.utils.enemy-autoplace")
 local enemies = require("prototypes.utils.enemies")
 
-local tint1 = { r = 1, g = 0.38, b = 0.24, a = 1 }
-local tint2 = { r = 1, g = 0.38, b = 0.24, a = 0.6 }
+local tint1 = { r = 1, g = 1, b = 1, a = 1 }
+local tint2 = { r = 1, g = 0.38, b = 0.24, a = 0.3 }
 local map_color = { r = 1, g = 0.38, b = 0.24 }
 local attributes = { "fastest-movement" }
 
@@ -54,3 +54,16 @@ enemies.build_spitter_spawner {
   map_color = map_color,
   tint = tint1
 }
+-- Worms
+for i, size in pairs(enemies.sizes) do
+  enemies.build_worm {
+    variant = "fast",
+    attributes = attributes,
+    autoplacer = autoplacer,
+    map_color = map_color,
+    size = size,
+    tier = i,
+    tint1 = tint1,
+    tint2 = tint2
+  }
+end

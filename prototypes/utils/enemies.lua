@@ -1,6 +1,8 @@
+require("__base__.prototypes.entity.worm-animations")
 local sounds = require("__base__.prototypes.entity.sounds")
 local hit_effects = require("__base__.prototypes.entity.hit-effects")
 local data_util = require("__flib__.data-util")
+local attack = require("attack")
 local animations = require("spawner-animation")
 local spitter_projectiles = require("spitter-projectiles")
 
@@ -100,13 +102,13 @@ local spitter_attributes = {
   range = { 11, 11, 11, 12, 12, 12, 13, 13, 14, 14 },
   cooldown = { 100, 100, 97, 97, 95, 95, 93, 93, 90, 90 },
   warmup = { 30, 29, 28, 27, 26, 25, 24, 23, 22, 21 },
+  damage = { 4, 7.5, 11.25, 15, 22.5, 27.5, 32.5, 37.5, 42.5, 47.5 },
 
   radius = { 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2.0, 2.5 },
   sticker_duration = { 600, 610, 620, 630, 640, 650, 660, 670, 680, 690 },
   damage_per_tick = { 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1 },
   sticker_damage_per_tick = { 0.025, 0.05, 0.075, 0.1, 0.125, 0.15, 0.175, 0.2, 0.225, 0.25 },
   sticker_movement_modifier = { 0.97, 0.96, 0.95, 0.94, 0.93, 0.92, 0.91, 0.90, 0.89, 0.88 },
-  damage = { 4, 7.5, 11.25, 15, 22.5, 27.5, 32.5, 37.5, 42.5, 47.5 },
   particle_vertical_acceleration = { 0.01, 0.01, 0.02, 0.02, 0.03, 0.03, 0.04, 0.04, 0.05, 0.05 },
   particle_hoizontal_speed = { 0.6, 0.6, 0.7, 0.7, 0.8, 0.8, 0.9, 0.9, 1, 1 },
   particle_hoizontal_speed_deviation = {
@@ -168,6 +170,44 @@ local spitter_attributes = {
   }
 }
 
+local worm_attributes = {
+  build_base_evolution_requirement = { 0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9 },
+  folding_speed = { 0.15, 0.15, 0.16, 0.16, 0.16, 0.17, 0.17, 0.18, 0.18, 0.19 },
+  healing_per_tick = { 0.01, 0.01, 0.015, 0.02, 0.05, 0.075, 0.1, 0.12, 0.14, 0.16 },
+  max_health = { 200, 350, 500, 750, 2000, 3500, 7500, 12000, 20000, 25000 },
+  prepare_range = { 30, 30, 35, 35, 40, 40, 40, 40, 45, 45 },
+  preparing_speed = { 0.025, 0.025, 0.026, 0.026, 0.027, 0.027, 0.028, 0.028, 0.029, 0.029 },
+  range = { 25, 27, 31, 33, 35, 36, 37, 38, 39, 40 },
+  radius = { 1.5, 1.6, 1.7, 1.8, 1.9, 2.0, 2.2, 2.3, 2.5, 3.0 },
+  sticker_movement_modifier = { 0.8, 0.8, 0.75, 0.75, 0.7, 0.7, 0.65, 0.65, 0.5, 0.5 },
+  sticker_damage_per_tick = { 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5 },
+  damage = { 12, 22.5, 33.75, 45, 67.5, 82.5, 97.5, 112.5, 127.5, 142.5 },
+
+  damage_per_tick = { 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1 },
+  sticker_duration = { 800, 810, 820, 830, 840, 850, 860, 870, 880, 890 },
+  cooldown = { 70, 70, 68, 66, 64, 62, 60, 58, 56, 54 },
+  scale = { 0.25, 0.40, 0.60, 0.8, 0.9, 1, 1.2, 1.4, 1.6, 1.8 },
+  particle_vertical_acceleration = { 0.01, 0.01, 0.02, 0.02, 0.03, 0.03, 0.04, 0.04, 0.05, 0.05 },
+  particle_hoizontal_speed = { 0.6, 0.6, 0.7, 0.7, 0.8, 0.8, 0.9, 0.9, 1, 1 },
+  particle_hoizontal_speed_deviation = {
+    0.0025,
+    0.0025,
+    0.0024,
+    0.0024,
+    0.0023,
+    0.0023,
+    0.0022,
+    0.0022,
+    0.0021,
+    0.0021
+  },
+  physical_decrease = { 0, 0, 5, 5, 8, 8, 10, 10, 12, 12 },
+  explosion_decrease = { 0, 0, 5, 5, 8, 8, 10, 10, 12, 12 },
+  explosion_percent = { 0, 0, 10, 10, 20, 20, 30, 30, 40, 40 },
+  fire_decrease = { 3, 3, 4, 4, 5, 5, 5, 5, 5, 6 },
+  fire_percent = { 40, 40, 42, 42, 43, 43, 44, 44, 45, 45 }
+}
+
 local spitterAttributeNumeric = {
   range = { 11, 11, 11, 12, 12, 12, 13, 13, 14, 14 },
   radius = { 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2.0, 2.5 },
@@ -225,11 +265,11 @@ local function apply_unit_attributes(unit, attributes)
     if attribute == "slow-movement" then
 
     elseif attribute == "fast-movement" then
-      unit.movement_speed = unit.movement_speed * 1.5
-      unit.distance_per_frame = unit.distance_per_frame * 1.5
+      unit.movement_speed = unit.movement_speed * 1.7
+      unit.distance_per_frame = unit.distance_per_frame * 1.7
     elseif attribute == "fastest-movement" then
-      unit.movement_speed = unit.movement_speed * 2
-      unit.distance_per_frame = unit.distance_per_frame * 2
+      unit.movement_speed = unit.movement_speed * 2.5
+      unit.distance_per_frame = unit.distance_per_frame * 2.5
     end
   end
 end
@@ -365,6 +405,8 @@ local function build_spitter(attributes)
     min_attack_distance = 10,
     cooldown = spitter_attributes.cooldown[tier],
     cooldown_deviation = 0.15,
+    radius = spitter_attributes.radius[tier],
+    damage = spitter_attributes.damage[tier],
     damage_modifier = damage_modifier_spitter_behemoth,
     warmup = spitter_attributes.warmup[tier],
     scale = scale,
@@ -379,7 +421,6 @@ local function build_spitter(attributes)
   -- damage_per_tick = { 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1 },
   -- sticker_damage_per_tick = { 0.025, 0.05, 0.075, 0.1, 0.125, 0.15, 0.175, 0.2, 0.225, 0.25 },
   -- sticker_movement_modifier = { 0.97, 0.96, 0.95, 0.94, 0.93, 0.92, 0.91, 0.90, 0.89, 0.88 },
-  -- damage = { 4, 7.5, 11.25, 15, 22.5, 27.5, 32.5, 37.5, 42.5, 47.5 },
   -- particle_vertical_acceleration = { 0.01, 0.01, 0.02, 0.02, 0.03, 0.03, 0.04, 0.04, 0.05, 0.05 },
   -- particle_hoizontal_speed = { 0.6, 0.6, 0.7, 0.7, 0.8, 0.8, 0.9, 0.9, 1, 1 },
   -- particle_hoizontal_speed_deviation = {
@@ -417,14 +458,14 @@ local function build_spitter(attributes)
       name = "acid-splash-fire-" .. name,
       scale = scale,
       tint = tint2,
-      ground_patch_scale = scale * ground_patch_scale_modifier,
-      patch_tint_multiplier = patch_opacity,
+      ground_patch_scale = scale * 0.65,
+      patch_tint_multiplier = 0.7,
       splash_damage_per_tick = spitter_attributes.sticker_damage_per_tick[tier],
       sticker_name = "acid-sticker-" .. name
     }),
     acid_sticker({
       name = "acid-sticker-" .. name,
-      tint = sticker_tint_small,
+      tint = tint2,
       slow_player_movement = 0.6 * spitter_attributes.sticker_movement_modifier[tier],
       slow_vehicle_speed = 0.6 * spitter_attributes.sticker_movement_modifier[tier],
       slow_vehicle_friction = 1.5,
@@ -447,6 +488,131 @@ local function build_spitter(attributes)
   })
 
   return spitter
+end
+
+local function build_worm(attributes)
+  local tier = attributes.tier
+  local scale = worm_attributes.scale[tier]
+  local name = attributes.variant .. "-" .. attributes.size .. "-worm-turret"
+  local tint1 = attributes.tint1
+  local tint2 = attributes.tint2 or tint1
+
+  local worm = data_util.copy_prototype(data.raw["turret"][vanilla_sizes[tier] .. "-worm-turret"])
+
+  worm.name = name
+  worm.corpse = attributes.variant .. "-" .. attributes.size .. "-worm-corpse"
+  worm.collision_box = { { -1.1 * scale, -1.0 * scale }, { 1.1 * scale, 1.0 * scale } }
+  worm.selection_box = { { -1.1 * scale, -1.0 * scale }, { 1.1 * scale, 1.0 * scale } }
+  worm.autoplace = attributes.autoplacer.enemy_worm_autoplace(10 *
+                                                                  worm_attributes.build_base_evolution_requirement[tier])
+
+  -- Custom map colors for each faction
+  if (settings.startup["combat-tweaks--new-enemy-map-colors"].value) then
+    worm.enemy_map_color = attributes.map_color
+  end
+
+  -- Set fixed attributes from lookup table
+  for _, attr in pairs {
+    "max_health",
+    "healing_per_tick",
+    "folding_speed",
+    "preparing_speed",
+    "prepare_range",
+    "build_base_evolution_requirement"
+  } do
+    worm[attr] = worm_attributes[attr][tier];
+  end
+
+  worm.folded_animation = worm_folded_animation(scale, tint1)
+  worm.preparing_animation = worm_preparing_animation(scale, tint1, "forward")
+  worm.prepared_alternative_animation = worm_prepared_alternative_animation(scale, tint1)
+  worm.prepared_animation = worm_prepared_animation(scale, tint1)
+  worm.starting_attack_animation = worm_start_attack_animation(scale, tint1)
+  worm.ending_attack_animation = worm_end_attack_animation(scale, tint1)
+  worm.folding_animation = worm_preparing_animation(scale, tint1, "backward")
+  worm.integration = worm_integration(scale)
+
+  worm.attack_parameters = {
+    type = "stream",
+    cooldown = 4,
+    range = worm_attributes.range[tier],
+    damage_modifier = 1.0,
+    min_range = 0,
+    projectile_creation_parameters = worm_shoot_shiftings(scale, 1.0),
+    use_shooter_direction = true,
+    lead_target_for_projectile_speed = 0.2 * 0.75 * 1.5 * 1.5, -- this is same as particle horizontal speed of flamethrower fire stream
+    ammo_type = {
+      category = "biological",
+      action = {
+        {
+          type = "area",
+          radius = worm_attributes.radius[tier],
+          action_delivery = {
+            type = "instant",
+            target_effects = {
+              { type = "damage", damage = { amount = worm_attributes.damage[tier], type = "acid" } }
+            }
+          }
+        },
+        {
+          type = "direct",
+          action_delivery = {
+            type = "stream",
+            stream = "acid-stream-" .. name,
+            source_offset = { 0.15, -0.5 }
+            -- target_effects = {
+            --   { type = "damage", damage = { amount = worm_attributes.damage[tier], type = "acid" } }
+            -- }
+          }
+        }
+      }
+    }
+  }
+
+  -- Worm corpse
+  local worm_corpse = data_util.copy_prototype(data.raw["corpse"][vanilla_sizes[tier] ..
+                                                   "-worm-corpse"])
+
+  worm_corpse.name = attributes.variant .. "-" .. attributes.size .. "-worm-corpse"
+  worm_corpse.animation = worm_die_animation(scale, tint1)
+  worm_corpse.ground_patch = { sheet = worm_integration(scale) }
+
+  data:extend({
+    worm,
+    worm_corpse,
+
+    -- Attacks
+    acid_stream {
+      name = "acid-stream-" .. name,
+      scale = scale,
+      tint = tint2,
+      corpse_name = "acid-splash-" .. name,
+      spit_radius = worm_attributes.radius[tier],
+      particle_spawn_interval = 1,
+      particle_spawn_timeout = 6,
+      splash_fire_name = "acid-splash-fire-" .. name,
+      sticker_name = "acid-sticker-" .. name
+    },
+    acid_splash_fire {
+      name = "acid-splash-fire-" .. name,
+      scale = scale,
+      tint = tint2,
+      ground_patch_scale = scale * 0.65,
+      patch_tint_multiplier = 0.7,
+      splash_damage_per_tick = worm_attributes.sticker_damage_per_tick[tier],
+      sticker_name = "acid-sticker-" .. name
+    },
+    acid_sticker {
+      name = "acid-sticker-" .. name,
+      tint = tint2,
+      slow_player_movement = worm_attributes.sticker_movement_modifier[tier],
+      slow_vehicle_speed = worm_attributes.sticker_movement_modifier[tier],
+      slow_vehicle_friction = 1.5,
+      slow_seconds = 2
+    }
+  })
+
+  return worm
 end
 
 -- Helper function to construct the results unit object that describes what units a spawner will
@@ -552,5 +718,6 @@ return {
   build_spitter = build_spitter,
   build_biter_spawner = build_biter_spawner,
   build_spitter_spawner = build_spitter_spawner,
+  build_worm = build_worm,
   build_result_units = build_result_units
 }

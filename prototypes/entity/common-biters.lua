@@ -54,3 +54,17 @@ enemies.build_spitter_spawner {
   map_color = map_color,
   tint = tint1
 }
+
+-- Worms
+for i, size in pairs(enemies.sizes) do
+  enemies.build_worm {
+    variant = "common",
+    attributes = attributes,
+    autoplacer = autoplacer,
+    map_color = map_color,
+    size = size,
+    tier = i,
+    tint1 = tint1,
+    tint2 = tint2
+  }
+end
