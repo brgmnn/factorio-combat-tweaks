@@ -661,7 +661,7 @@ local function acid_sticker(data)
   }
 end
 
-local function attack_parameters(data)
+local function spitter_attack_parameters(data)
   return {
     type = "stream",
     ammo_category = "biological",
@@ -703,6 +703,5 @@ return {
   acid_stream = acid_stream,
   acid_splash_fire = acid_splash_fire,
   acid_sticker = acid_sticker,
-  attack_parameters = attack_parameters,
-  build_streams = build_streams
+  spitter_attack_parameters = spitter_attack_parameters
 }

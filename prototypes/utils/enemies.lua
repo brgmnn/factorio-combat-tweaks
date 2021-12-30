@@ -2,7 +2,6 @@ require("__base__.prototypes.entity.worm-animations")
 local sounds = require("__base__.prototypes.entity.sounds")
 local hit_effects = require("__base__.prototypes.entity.hit-effects")
 local data_util = require("__flib__.data-util")
-local attack = require("attack")
 local animations = require("spawner-animation")
 local attack_projectiles = require("attack-projectiles")
 
