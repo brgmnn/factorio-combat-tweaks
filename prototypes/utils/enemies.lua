@@ -4,7 +4,7 @@ local hit_effects = require("__base__.prototypes.entity.hit-effects")
 local data_util = require("__flib__.data-util")
 local attack = require("attack")
 local animations = require("spawner-animation")
-local spitter_projectiles = require("spitter-projectiles")
+local attack_projectiles = require("attack-projectiles")
 
 local sizes = {
   "larva",
@@ -99,19 +99,12 @@ local spitter_attributes = {
   movement_speed = { 0.185, 0.18, 0.18, 0.17, 0.17, 0.16, 0.16, 0.15, 0.15, 0.14 },
   distance_per_frame = { 0.04, 0.045, 0.050, 0.055, 0.060, 0.065, 0.067, 0.069, 0.071, 0.073 },
   pollution_to_join_attack = { 10, 40, 80, 120, 200, 300, 450, 550, 650, 750 },
-  range = { 11, 11, 11, 12, 12, 12, 13, 13, 14, 14 },
+  range = { 11, 11, 11, 12, 13, 14, 15, 16, 17, 18 },
   cooldown = { 100, 100, 97, 97, 95, 95, 93, 93, 90, 90 },
   warmup = { 30, 29, 28, 27, 26, 25, 24, 23, 22, 21 },
-  damage = { 4, 7.5, 11.25, 15, 22.5, 27.5, 32.5, 37.5, 42.5, 47.5 },
-
-  radius = { 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2.0, 2.5 },
-  sticker_duration = { 600, 610, 620, 630, 640, 650, 660, 670, 680, 690 },
-  damage_per_tick = { 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1 },
-  sticker_damage_per_tick = { 0.025, 0.05, 0.075, 0.1, 0.125, 0.15, 0.175, 0.2, 0.225, 0.25 },
-  sticker_movement_modifier = { 0.97, 0.96, 0.95, 0.94, 0.93, 0.92, 0.91, 0.90, 0.89, 0.88 },
   particle_vertical_acceleration = { 0.01, 0.01, 0.02, 0.02, 0.03, 0.03, 0.04, 0.04, 0.05, 0.05 },
-  particle_hoizontal_speed = { 0.6, 0.6, 0.7, 0.7, 0.8, 0.8, 0.9, 0.9, 1, 1 },
-  particle_hoizontal_speed_deviation = {
+  particle_horizontal_speed = { 0.6, 0.6, 0.7, 0.7, 0.8, 0.8, 0.9, 0.9, 1, 1 },
+  particle_horizontal_speed_deviation = {
     0.0025,
     0.0025,
     0.0024,
@@ -124,11 +117,15 @@ local spitter_attributes = {
     0.0021
   },
   scale = { 0.25, 0.40, 0.60, 0.8, 0.9, 1, 1.2, 1.4, 1.6, 1.8 },
+  radius = { 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2.0, 2.5 },
+  sticker_damage_per_tick = { 0.025, 0.05, 0.075, 0.1, 0.125, 0.15, 0.175, 0.2, 0.225, 0.25 },
+  sticker_duration = { 600, 610, 620, 630, 640, 650, 660, 670, 680, 690 },
+  sticker_movement_modifier = { 0.97, 0.96, 0.95, 0.94, 0.93, 0.92, 0.91, 0.90, 0.89, 0.88 },
 
-  physical_decrease = { 0, 0, 0, 0, 2, 4, 6, 8, 10, 12 },
-  physical_percent = { 0, 0, 0, 10, 12, 12, 14, 14, 15, 15 },
-  explosion_percent = { 0, 0, 10, 10, 20, 20, 30, 30, 40, 40 },
-  spawning_time_modifer = { 1, 1, 1, 2, 2, 5, 8, 8, 10, 10 },
+  -- physical_decrease = { 0, 0, 0, 0, 2, 4, 6, 8, 10, 12 },
+  -- physical_percent = { 0, 0, 0, 10, 12, 12, 14, 14, 15, 15 },
+  -- explosion_percent = { 0, 0, 10, 10, 20, 20, 30, 30, 40, 40 },
+  -- spawning_time_modifer = { 1, 1, 1, 2, 2, 5, 8, 8, 10, 10 },
 
   collision_box = {
     { { -0.1, -0.1 }, { 0.1, 0.1 } },
@@ -155,19 +152,7 @@ local spitter_attributes = {
     { { -2.8, -4.0 }, { 2.8, 1.3 } }
   },
 
-  roarvolume = { 0.4, 0.4, 0.5, 0.5, 0.6, 0.6, 0.7, 0.7, 0.8, 0.8 },
-  attack_parameters_fn = {
-    spitter_attack_parameters,
-    spitter_attack_parameters,
-    spitter_mid_attack_parameters,
-    spitter_mid_attack_parameters,
-    spitter_big_attack_parameters,
-    spitter_big_attack_parameters,
-    spitter_behemoth_attack_parameters,
-    spitter_behemoth_attack_parameters,
-    spitter_behemoth_attack_parameters,
-    spitter_behemoth_attack_parameters
-  }
+  roarvolume = { 0.4, 0.4, 0.5, 0.5, 0.6, 0.6, 0.7, 0.7, 0.8, 0.8 }
 }
 
 local worm_attributes = {
@@ -367,7 +352,7 @@ end
 
 local function build_spitter(attributes)
   local tier = attributes.tier
-  local scale = biter_attributes.scale[tier]
+  local scale = spitter_attributes.scale[tier]
   local vanilla_size = vanilla_sizes[tier]
   local name = attributes.variant .. "-" .. attributes.size .. "-spitter"
   local tint1 = attributes.tint1
@@ -399,15 +384,13 @@ local function build_spitter(attributes)
   spitter.corpse = name .. "-corpse"
   -- TODO: water_reflection
 
-  spitter.attack_parameters = spitter_projectiles.attack_parameters {
+  spitter.attack_parameters = attack_projectiles.spitter_attack_parameters {
     acid_stream_name = "acid-stream-" .. name,
     range = spitter_attributes.range[tier],
     min_attack_distance = 10,
     cooldown = spitter_attributes.cooldown[tier],
     cooldown_deviation = 0.15,
-    radius = spitter_attributes.radius[tier],
-    damage = spitter_attributes.damage[tier],
-    damage_modifier = damage_modifier_spitter_behemoth,
+    damage_modifier = 1,
     warmup = spitter_attributes.warmup[tier],
     scale = scale,
     tint1 = tint1,
@@ -416,45 +399,27 @@ local function build_spitter(attributes)
     range_mode = "bounding-box-to-bounding-box"
   }
 
-  -- warmup = { 30, 29, 28, 27, 26, 25, 24, 23, 22, 21 },
-  -- sticker_duration = { 600, 610, 620, 630, 640, 650, 660, 670, 680, 690 },
-  -- damage_per_tick = { 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1 },
-  -- sticker_damage_per_tick = { 0.025, 0.05, 0.075, 0.1, 0.125, 0.15, 0.175, 0.2, 0.225, 0.25 },
-  -- sticker_movement_modifier = { 0.97, 0.96, 0.95, 0.94, 0.93, 0.92, 0.91, 0.90, 0.89, 0.88 },
-  -- particle_vertical_acceleration = { 0.01, 0.01, 0.02, 0.02, 0.03, 0.03, 0.04, 0.04, 0.05, 0.05 },
-  -- particle_hoizontal_speed = { 0.6, 0.6, 0.7, 0.7, 0.8, 0.8, 0.9, 0.9, 1, 1 },
-  -- particle_hoizontal_speed_deviation = {
-  --   0.0025,
-  --   0.0025,
-  --   0.0024,
-  --   0.0024,
-  --   0.0023,
-  --   0.0023,
-  --   0.0022,
-  --   0.0022,
-  --   0.0021,
-  --   0.0021
-  -- },
-  -- scale = { 0.25, 0.40, 0.60, 0.8, 0.9, 1, 1.2, 1.4, 1.6, 1.8 },
-
   apply_unit_attributes(spitter, attributes.attributes)
 
   data:extend({
     spitter,
 
-    -- Attacks
-    acid_stream {
+    -- Attack objects
+    attack_projectiles.acid_stream {
       name = "acid-stream-" .. name,
       scale = scale * 1.1,
       tint = tint2,
       corpse_name = "acid-splash-spitter-" .. vanilla_size,
       spit_radius = spitter_attributes.radius[tier],
+      particle_horizontal_speed = spitter_attributes.particle_horizontal_speed[tier],
+      particle_horizontal_speed_deviation = spitter_attributes.particle_horizontal_speed_deviation[tier],
       particle_spawn_interval = 1,
       particle_spawn_timeout = 6,
+      particle_vertical_acceleration = spitter_attributes.particle_vertical_acceleration[tier],
       splash_fire_name = "acid-splash-fire-" .. name,
       sticker_name = "acid-sticker-" .. name
     },
-    acid_splash_fire({
+    attack_projectiles.acid_splash_fire({
       name = "acid-splash-fire-" .. name,
       scale = scale,
       tint = tint2,
@@ -463,13 +428,14 @@ local function build_spitter(attributes)
       splash_damage_per_tick = spitter_attributes.sticker_damage_per_tick[tier],
       sticker_name = "acid-sticker-" .. name
     }),
-    acid_sticker({
+    attack_projectiles.acid_sticker({
       name = "acid-sticker-" .. name,
       tint = tint2,
+      damage_per_tick = spitter_attributes.sticker_damage_per_tick[tier],
       slow_player_movement = 0.6 * spitter_attributes.sticker_movement_modifier[tier],
       slow_vehicle_speed = 0.6 * spitter_attributes.sticker_movement_modifier[tier],
       slow_vehicle_friction = 1.5,
-      slow_seconds = 2
+      slow_seconds = spitter_attributes.sticker_duration[tier]
     }),
 
     -- Death animations
