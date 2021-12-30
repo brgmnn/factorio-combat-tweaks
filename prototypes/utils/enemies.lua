@@ -166,25 +166,14 @@ local worm_attributes = {
   sticker_movement_modifier = { 0.8, 0.8, 0.75, 0.75, 0.7, 0.7, 0.65, 0.65, 0.5, 0.5 },
   sticker_damage_per_tick = { 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5 },
   damage = { 12, 22.5, 33.75, 45, 67.5, 82.5, 97.5, 112.5, 127.5, 142.5 },
+  particle_vertical_acceleration = { 0.01, 0.01, 0.02, 0.02, 0.03, 0.03, 0.04, 0.04, 0.05, 0.05 },
+  particle_horizontal_speed = { 0.6, 0.6, 0.7, 0.7, 0.8, 0.8, 0.9, 0.9, 1, 1 },
+  particle_horizontal_speed_deviation = {0.0025,0.0025,0.0024,0.0024,0.0023,0.0023,0.0022,0.0022,0.0021,0.0021},
+  sticker_duration = { 800, 810, 820, 830, 840, 850, 860, 870, 880, 890 },
+  scale = { 0.25, 0.40, 0.60, 0.8, 0.9, 1, 1.2, 1.4, 1.6, 1.8 },
 
   damage_per_tick = { 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1 },
-  sticker_duration = { 800, 810, 820, 830, 840, 850, 860, 870, 880, 890 },
   cooldown = { 70, 70, 68, 66, 64, 62, 60, 58, 56, 54 },
-  scale = { 0.25, 0.40, 0.60, 0.8, 0.9, 1, 1.2, 1.4, 1.6, 1.8 },
-  particle_vertical_acceleration = { 0.01, 0.01, 0.02, 0.02, 0.03, 0.03, 0.04, 0.04, 0.05, 0.05 },
-  particle_hoizontal_speed = { 0.6, 0.6, 0.7, 0.7, 0.8, 0.8, 0.9, 0.9, 1, 1 },
-  particle_hoizontal_speed_deviation = {
-    0.0025,
-    0.0025,
-    0.0024,
-    0.0024,
-    0.0023,
-    0.0023,
-    0.0022,
-    0.0022,
-    0.0021,
-    0.0021
-  },
   physical_decrease = { 0, 0, 5, 5, 8, 8, 10, 10, 12, 12 },
   explosion_decrease = { 0, 0, 5, 5, 8, 8, 10, 10, 12, 12 },
   explosion_percent = { 0, 0, 10, 10, 20, 20, 30, 30, 40, 40 },
@@ -459,6 +448,7 @@ local function build_worm(attributes)
   local tier = attributes.tier
   local scale = worm_attributes.scale[tier]
   local name = attributes.variant .. "-" .. attributes.size .. "-worm-turret"
+  local vanilla_size = vanilla_sizes[tier]
   local tint1 = attributes.tint1
   local tint2 = attributes.tint2 or tint1
 
@@ -509,25 +499,23 @@ local function build_worm(attributes)
     ammo_type = {
       category = "biological",
       action = {
-        {
-          type = "area",
-          radius = worm_attributes.radius[tier],
-          action_delivery = {
-            type = "instant",
-            target_effects = {
-              { type = "damage", damage = { amount = worm_attributes.damage[tier], type = "acid" } }
-            }
-          }
-        },
+        -- Direct damage needs to be reworked?
+        -- {
+        --   type = "area",
+        --   radius = worm_attributes.radius[tier],
+        --   action_delivery = {
+        --     type = "instant",
+        --     target_effects = {
+        --       { type = "damage", damage = { amount = worm_attributes.damage[tier], type = "acid" } }
+        --     }
+        --   }
+        -- },
         {
           type = "direct",
           action_delivery = {
             type = "stream",
             stream = "acid-stream-" .. name,
             source_offset = { 0.15, -0.5 }
-            -- target_effects = {
-            --   { type = "damage", damage = { amount = worm_attributes.damage[tier], type = "acid" } }
-            -- }
           }
         }
       }
@@ -547,18 +535,21 @@ local function build_worm(attributes)
     worm_corpse,
 
     -- Attacks
-    acid_stream {
+    attack_projectiles.acid_stream {
       name = "acid-stream-" .. name,
-      scale = scale,
+      scale = scale * 1.1,
       tint = tint2,
-      corpse_name = "acid-splash-" .. name,
+      corpse_name = "acid-splash-spitter-" .. vanilla_size,
       spit_radius = worm_attributes.radius[tier],
+      particle_horizontal_speed = worm_attributes.particle_horizontal_speed[tier],
+      particle_horizontal_speed_deviation = worm_attributes.particle_horizontal_speed_deviation[tier],
       particle_spawn_interval = 1,
       particle_spawn_timeout = 6,
+      particle_vertical_acceleration = worm_attributes.particle_vertical_acceleration[tier],
       splash_fire_name = "acid-splash-fire-" .. name,
       sticker_name = "acid-sticker-" .. name
     },
-    acid_splash_fire {
+    attack_projectiles.acid_splash_fire {
       name = "acid-splash-fire-" .. name,
       scale = scale,
       tint = tint2,
@@ -567,13 +558,14 @@ local function build_worm(attributes)
       splash_damage_per_tick = worm_attributes.sticker_damage_per_tick[tier],
       sticker_name = "acid-sticker-" .. name
     },
-    acid_sticker {
+    attack_projectiles.acid_sticker {
       name = "acid-sticker-" .. name,
       tint = tint2,
+      damage_per_tick = worm_attributes.sticker_damage_per_tick[tier],
       slow_player_movement = worm_attributes.sticker_movement_modifier[tier],
       slow_vehicle_speed = worm_attributes.sticker_movement_modifier[tier],
       slow_vehicle_friction = 1.5,
-      slow_seconds = 2
+      slow_seconds = worm_attributes.sticker_duration[tier]
     }
   })
 
