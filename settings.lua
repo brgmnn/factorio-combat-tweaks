@@ -71,6 +71,48 @@ data:extend({
     per_user = false
   },
 
+  -- Safe building toggles
+  {
+    type = "bool-setting",
+    name = "combat-tweaks--safe-buildings--big-electric-pole",
+    setting_type = "runtime-global",
+    default_value = false,
+    order = "c[modifier]-d[safe]",
+    per_user = false
+  },
+  {
+    type = "bool-setting",
+    name = "combat-tweaks--safe-buildings--rails",
+    setting_type = "runtime-global",
+    default_value = false,
+    order = "c[modifier]-c[safe]",
+    per_user = false
+  },
+  {
+    type = "bool-setting",
+    name = "combat-tweaks--safe-buildings--rail-signals",
+    setting_type = "runtime-global",
+    default_value = false,
+    order = "c[modifier]-e[safe]",
+    per_user = false
+  },
+  {
+    type = "bool-setting",
+    name = "combat-tweaks--safe-buildings--train-stop",
+    setting_type = "runtime-global",
+    default_value = false,
+    order = "c[modifier]-g[safe]",
+    per_user = false
+  },
+  {
+    type = "bool-setting",
+    name = "combat-tweaks--safe-buildings--small-lamp",
+    setting_type = "runtime-global",
+    default_value = false,
+    order = "c[modifier]-h[safe]",
+    per_user = false
+  },
+
   -- Unkillable toggles
   {
     type = "bool-setting",
@@ -127,5 +169,5 @@ data:extend({
     default_value = false,
     order = "12",
     per_user = false
-  },
+  }
 })
