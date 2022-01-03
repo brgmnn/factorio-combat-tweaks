@@ -9,7 +9,7 @@ local map_color = { r = 1, g = 0.38, b = 0.24 }
 local attributes = { "fastest-movement" }
 
 -- Use the same autoplacer for this faction
-local autoplacer = create_autoplacer { name = "fast-biter", seed = 456, density = 1 / 4 }
+local autoplacer = create_autoplacer { name = "fast-biter", seed = 456, density = 1 / 16 }
 
 -- --- Biters ---
 for i, size in pairs(enemies.sizes) do

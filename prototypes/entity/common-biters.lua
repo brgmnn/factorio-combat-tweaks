@@ -9,7 +9,8 @@ local map_color = { r = 1, g = 1, b = 1 }
 local attributes = { "fast-spawning" }
 
 -- Use the same autoplacer for this faction
-local autoplacer = create_autoplacer { name = "common-biter", seed = 1234, density = 1 / 2 }
+-- TODO: make density configurable
+local autoplacer = create_autoplacer { name = "common-biter", seed = 1234, density = 1 / 8 }
 
 -- --- Biters ---
 for i, size in pairs(enemies.sizes) do
