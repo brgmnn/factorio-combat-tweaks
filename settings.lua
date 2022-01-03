@@ -16,6 +16,14 @@ data:extend({
     order = "0",
     per_user = false
   },
+  {
+    type = "bool-setting",
+    name = "combat-tweaks--small-collision-boxes",
+    setting_type = "startup",
+    default_value = false,
+    order = "0",
+    per_user = false
+  },
 
   -- Technology research
   {

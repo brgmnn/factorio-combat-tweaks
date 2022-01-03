@@ -168,7 +168,18 @@ local worm_attributes = {
   damage = { 12, 22.5, 33.75, 45, 67.5, 82.5, 97.5, 112.5, 127.5, 142.5 },
   particle_vertical_acceleration = { 0.01, 0.01, 0.02, 0.02, 0.03, 0.03, 0.04, 0.04, 0.05, 0.05 },
   particle_horizontal_speed = { 0.6, 0.6, 0.7, 0.7, 0.8, 0.8, 0.9, 0.9, 1, 1 },
-  particle_horizontal_speed_deviation = {0.0025,0.0025,0.0024,0.0024,0.0023,0.0023,0.0022,0.0022,0.0021,0.0021},
+  particle_horizontal_speed_deviation = {
+    0.0025,
+    0.0025,
+    0.0024,
+    0.0024,
+    0.0023,
+    0.0023,
+    0.0022,
+    0.0022,
+    0.0021,
+    0.0021
+  },
   sticker_duration = { 800, 810, 820, 830, 840, 850, 860, 870, 880, 890 },
   scale = { 0.25, 0.40, 0.60, 0.8, 0.9, 1, 1.2, 1.4, 1.6, 1.8 },
 
@@ -229,6 +240,14 @@ local spawn_probability = {
   { { 0.90, 0 }, { 0.925, 0.5 }, { 0.975, 0.0 } },
   { { 0.93, 0 }, { 1.000, 1.0 } }
 }
+
+-- Small collision box clamp
+local function clamp_collision_box(box)
+  return {
+    { math.max(-0.4, box[1][1]), math.max(-0.4, box[1][2]) },
+    { math.min(0.4, box[2][1]), math.min(0.4, box[2][2]) }
+  }
+end
 
 -- Applies unit attributes
 local function apply_unit_attributes(unit, attributes)
@@ -293,6 +312,10 @@ local function build_biter(attributes)
     biter[attr] = biter_attributes[attr][tier];
   end
   -- TODO: water_reflection
+
+  if settings.startup["combat-tweaks--small-collision-boxes"].value then
+    biter.collision_box = clamp_collision_box(biter.collision_box)
+  end
 
   biter.run_animation = biterrunanimation(scale, tint1, tint2)
   biter.corpse = name .. "-corpse"
@@ -366,6 +389,10 @@ local function build_spitter(attributes)
     "selection_box"
   } do
     spitter[attr] = spitter_attributes[attr][tier];
+  end
+
+  if settings.startup["combat-tweaks--small-collision-boxes"].value then
+    biter.collision_box = clamp_collision_box(biter.collision_box)
   end
 
   spitter.run_animation = spitterrunanimation(scale, tint1, tint2)

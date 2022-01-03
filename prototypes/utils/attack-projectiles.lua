@@ -1,5 +1,5 @@
 -- require("__base__.prototypes.entity.spitter-animations")
-local math3d = require "math3d"
+-- local math3d = require "math3d"
 
 local function acid_stream(data)
   return {
