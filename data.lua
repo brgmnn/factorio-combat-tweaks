@@ -1,9 +1,3 @@
--- New enemies
-if (settings.startup["combat-tweaks--use-enemies"].value) then
-  require("prototypes.entity.common-biters")
-  require("prototypes.entity.fast-biters")
-end
-
 -- Unkillable entities
 for _, category in pairs {
   "construction-robot",
