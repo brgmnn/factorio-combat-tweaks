@@ -12,6 +12,8 @@ local function create_autoplacer(build_params)
   local onehalf_exp = tne(1) / 2
   local onethird_exp = tne(1) / 3
 
+  local density_factor = build_params.density or 1
+
   local function generate_enemy_base_probability_expression()
     local seed1 = build_params.seed
     local pi_over_3 = tne(math.pi) / 3
@@ -30,7 +32,7 @@ local function create_autoplacer(build_params)
     local spot_quantity_expression = pi_over_3 * spot_radius_expression * spot_radius_expression *
                                          spot_height_expression
     -- spot_quantity_expression = noise.compile_time_log("Spot quantity: ", spot_quantity_expression)
-    local density_expression = spot_quantity_expression * frequency_expression
+    local density_expression = spot_quantity_expression * frequency_expression * density_factor
     -- density_expression = noise.compile_time_log("Density: ", density_expression)
 
     local basement_value = -1000
@@ -110,7 +112,8 @@ local function create_autoplacer(build_params)
         -- biter placement stops increasing in "intensity" after 75 chunks
         return noise.clamp(tile.distance, 0, 75 * 32) / 325
       end)
-    }, {
+    },
+    {
       type = "noise-expression",
       name = build_params.name .. "-base-radius",
       expression = noise.define_noise_function(function(x, y, tile, map)
@@ -118,14 +121,16 @@ local function create_autoplacer(build_params)
         return enemy_base_control_setting.size_multiplier ^ onehalf_exp *
                    (tne(15) + 4 * noise.var(build_params.name .. "-base-intensity"))
       end)
-    }, {
+    },
+    {
       type = "noise-expression",
       name = build_params.name .. "-base-frequency",
       expression = noise.define_noise_function(function(x, y, tile, map)
         local bases_per_km2 = 10 + 3 * noise.var(build_params.name .. "-base-intensity")
         return enemy_base_control_setting.frequency_multiplier * bases_per_km2 / 1000000
       end)
-    }, {
+    },
+    {
       type = "noise-expression",
       name = build_params.name .. "-base-probability",
       expression = generate_enemy_base_probability_expression()
