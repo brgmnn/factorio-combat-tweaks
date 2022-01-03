@@ -33,7 +33,5 @@ if #safe_buildings_filter > 0 then
   event.register(build_events, function(event)
     local entity = event.created_entity or event.entity
     entity.destructible = false
-
-    game.print("lamp or pole built!")
   end, safe_buildings_filter)
 end
