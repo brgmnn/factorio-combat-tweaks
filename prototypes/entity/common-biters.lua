@@ -11,7 +11,7 @@ local attributes = { "fast-spawning" }
 -- Use the same autoplacer for this faction
 local autoplacer = create_autoplacer { name = "common-biter", seed = 1234 }
 
--- Biters
+-- --- Biters ---
 for i, size in pairs(enemies.sizes) do
   enemies.build_biter {
     variant = "common",
@@ -24,7 +24,7 @@ for i, size in pairs(enemies.sizes) do
   }
 end
 
--- Spitters
+-- --- Spitters ---
 for i, size in pairs(enemies.sizes) do
   enemies.build_spitter {
     variant = "common",
@@ -37,6 +37,21 @@ for i, size in pairs(enemies.sizes) do
   }
 end
 
+-- --- Worms ---
+for i, size in pairs(enemies.sizes) do
+  enemies.build_worm {
+    variant = "common",
+    attributes = attributes,
+    autoplacer = autoplacer,
+    map_color = map_color,
+    size = size,
+    tier = i,
+    tint1 = tint1,
+    tint2 = tint2
+  }
+end
+
+-- --- Spawners ---
 -- Biter spawner
 enemies.build_biter_spawner {
   variant = "common",
@@ -54,17 +69,3 @@ enemies.build_spitter_spawner {
   map_color = map_color,
   tint = tint1
 }
-
--- Worms
-for i, size in pairs(enemies.sizes) do
-  enemies.build_worm {
-    variant = "common",
-    attributes = attributes,
-    autoplacer = autoplacer,
-    map_color = map_color,
-    size = size,
-    tier = i,
-    tint1 = tint1,
-    tint2 = tint2
-  }
-end

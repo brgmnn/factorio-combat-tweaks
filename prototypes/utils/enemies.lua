@@ -283,6 +283,80 @@ local function apply_spawner_attributes(spawner, attributes)
   end
 end
 
+-- Builds a resistance object for an individual unit given it's tier and a resistance table for
+-- that faction. Given a table such as:
+--   {
+--     physical = {
+--       decrease = { 0, 0, 4, 5, 6, 8, 11, 13, 16, 17 },
+--       percent = { 0, 0, 0, 10, 12, 12, 14, 16, 18, 20 },
+--     },
+--     explosion = {
+--       decrease = { 0, 0, 0, 0, 0, 10, 12, 14, 16, 20 },
+--       percent = { 0, 0, 0, 10, 12, 13, 15, 16, 17, 20 },
+--     },
+--   }
+--
+-- Called for tier 8 we expect to get a unit resistance table of:
+--   {
+--     {
+--       type = "physical",
+--       decrease = 13,
+--       percent = 16
+--     },
+--     {
+--       type = "explosion",
+--       decrease = 14,
+--       percent = 16
+--     }
+--   },
+--
+-- Allowable damage types are: physical, impact, fire, acid, poison, explosion, laser, electric
+local function build_unit_resistances(resistance_table, tier)
+  local resistances = {}
+
+  for damage_type, resistance in pairs(resistance_table) do
+    resistances[#resistances + 1] = {
+      type = damage_type,
+      decrease = resistance.decrease[tier],
+      percent = resistance.percent[tier]
+    }
+  end
+
+  return resistances
+end
+
+local default_biter_resistances = {
+  physical = {
+    decrease = { 0, 0, 4, 5, 6, 8, 11, 13, 16, 17 },
+    percent = { 0, 0, 0, 10, 12, 12, 14, 16, 18, 20 }
+  },
+  explosion = {
+    decrease = { 0, 0, 0, 0, 0, 10, 12, 14, 16, 20 },
+    percent = { 0, 0, 0, 10, 12, 13, 15, 16, 17, 20 }
+  }
+}
+
+local default_spitter_resistances = {
+  physical = {
+    decrease = { 0, 0, 0, 0, 2, 4, 6, 8, 10, 12 },
+    percent = { 0, 0, 0, 10, 12, 12, 14, 14, 15, 15 }
+  },
+  explosion = { decrease = {}, percent = { 0, 0, 10, 10, 20, 20, 30, 30, 40, 40 } }
+}
+
+local default_worm_resistances = {
+  physical = { decrease = { 0, 0, 5, 5, 8, 8, 10, 10, 12, 12 }, percent = {} },
+  explosion = {
+    decrease = { 0, 0, 5, 5, 8, 8, 10, 10, 12, 12 },
+    percent = { 0, 0, 10, 10, 20, 20, 30, 30, 40, 40 }
+  },
+  fire = {
+    decrease = { 3, 3, 4, 4, 5, 5, 5, 5, 5, 6 },
+    percent = { 40, 40, 42, 42, 43, 43, 44, 44, 45, 45 }
+  }
+}
+
+-- Builds a biter unit
 local function build_biter(attributes)
   local tier = attributes.tier
   local scale = biter_attributes.scale[tier]
@@ -293,6 +367,8 @@ local function build_biter(attributes)
   local biter = data_util.copy_prototype(data.raw["unit"][vanilla_sizes[tier] .. "-biter"])
 
   biter.name = name
+  biter.resistances = attributes.resistances or
+                          build_unit_resistances(default_biter_resistances, tier)
 
   -- Custom map colors for each faction
   if (settings.startup["combat-tweaks--new-enemy-map-colors"].value) then
@@ -313,7 +389,7 @@ local function build_biter(attributes)
   end
   -- TODO: water_reflection
 
-  if settings.startup["combat-tweaks--small-collision-boxes"].value then
+  if (settings.startup["combat-tweaks--small-collision-boxes"].value) then
     biter.collision_box = clamp_collision_box(biter.collision_box)
   end
 
@@ -361,6 +437,7 @@ local function build_biter(attributes)
   return biter
 end
 
+-- Builds a spitter unit
 local function build_spitter(attributes)
   local tier = attributes.tier
   local scale = spitter_attributes.scale[tier]
@@ -372,6 +449,8 @@ local function build_spitter(attributes)
   local spitter = data_util.copy_prototype(data.raw["unit"][vanilla_sizes[tier] .. "-spitter"])
 
   spitter.name = name
+  spitter.resistances = attributes.resistances or
+                            build_unit_resistances(default_spitter_resistances, tier)
 
   -- Custom map colors for each faction
   if (settings.startup["combat-tweaks--new-enemy-map-colors"].value) then
@@ -392,7 +471,7 @@ local function build_spitter(attributes)
   end
 
   if settings.startup["combat-tweaks--small-collision-boxes"].value then
-    biter.collision_box = clamp_collision_box(biter.collision_box)
+    spitter.collision_box = clamp_collision_box(spitter.collision_box)
   end
 
   spitter.run_animation = spitterrunanimation(scale, tint1, tint2)
@@ -471,6 +550,7 @@ local function build_spitter(attributes)
   return spitter
 end
 
+-- Builds a worm turret
 local function build_worm(attributes)
   local tier = attributes.tier
   local scale = worm_attributes.scale[tier]
@@ -482,6 +562,8 @@ local function build_worm(attributes)
   local worm = data_util.copy_prototype(data.raw["turret"][vanilla_sizes[tier] .. "-worm-turret"])
 
   worm.name = name
+  worm.resistances = attributes.resistances or
+                         build_unit_resistances(default_worm_resistances, tier)
   worm.corpse = attributes.variant .. "-" .. attributes.size .. "-worm-corpse"
   worm.collision_box = { { -1.1 * scale, -1.0 * scale }, { 1.1 * scale, 1.0 * scale } }
   worm.selection_box = { { -1.1 * scale, -1.0 * scale }, { 1.1 * scale, 1.0 * scale } }
@@ -703,5 +785,6 @@ return {
   build_biter_spawner = build_biter_spawner,
   build_spitter_spawner = build_spitter_spawner,
   build_worm = build_worm,
+  build_unit_resistances = build_unit_resistances,
   build_result_units = build_result_units
 }
