@@ -1,8 +1,6 @@
 -- New enemies
-if (settings.startup["combat-tweaks--use-enemies"].value) then
-  require("prototypes.entity.common-biters")
-  require("prototypes.entity.fast-biters")
-end
+require("prototypes.entity.common-biters")
+require("prototypes.entity.fast-biters")
 
 local shell_range = settings.startup["combat-tweaks--cannon-shell-range"].value
 local min_cannon_turret_range = settings.startup["combat-tweaks--min-cannon-turret-range"].value
